@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Xin lỗi — Yêu Hoa</title>
+<style>
+  :root{
+    --bg1: linear-gradient(120deg,#ffdde1 0%, #ee9ca7 50%, #ffd1ff 100%);
+    --pink: #ffb6c1;
+    --deep-pink: #ff6b9a;
+    --glass: rgba(255,255,255,0.18);
+    --glass-strong: rgba(255,255,255,0.9);
+    --accent: #ff4d7a;
+    --text: #2b0a1b;
+    --transition-time: 900ms;
+    font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  /* Reset */
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+
+  body{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: radial-gradient(circle at 10% 20%, #fff0f6 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, #fff7ea 0%, transparent 20%),
+                var(--bg1);
+    transition: background var(--transition-time) ease, color var(--transition-time) ease;
+    overflow:hidden;
+    color:var(--text);
+  }
+
+  /* Main card */
+  .card{
+    position:relative;
+    width:min(920px, 94vw);
+    max-width:920px;
+    border-radius:20px;
+    padding:48px;
+    display:grid;
+    place-items:center;
+    gap:18px;
+    z-index:5;
+  }
+
+  /* soft glass panel with center blur window */
+  .panel{
+    width:100%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.18));
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius:18px;
+    padding:36px;
+    box-shadow: 0 10px 30px rgba(235,76,122,0.12);
+    backdrop-filter: blur(6px) saturate(120%);
+    text-align:center;
+    transition: transform var(--transition-time) ease, opacity var(--transition-time) ease, background var(--transition-time) ease;
+  }
+
+  .intro-title{
+    font-size:clamp(22px, 3.6vw, 36px);
+    font-weight:700;
+    letter-spacing:0.4px;
+    color:var(--accent);
+    margin-bottom:12px;
+  }
+  .intro-quote{
+    font-size:clamp(14px, 2vw, 18px);
+    color: #3a1e2bdd;
+    line-height:1.45;
+    margin-bottom:18px;
+  }
+
+  .apology {
+    display:inline-block;
+    padding:14px 22px;
+    border-radius:999px;
+    background: rgba(255,255,255,0.8);
+    color:#7b1020;
+    font-weight:600;
+    box-shadow: 0 6px 20px rgba(119,22,42,0.12);
+    transform:translateY(0);
+    transition: transform 700ms cubic-bezier(.2,.9,.28,1);
+  }
+
+  /* Decorative hearts floating behind using pseudo elements */
+  .card::before, .card::after{
+    content:"";
+    position:absolute;
+    width:50%;
+    height:50%;
+    filter: blur(38px);
+    opacity:0.55;
+    z-index:1;
+    pointer-events:none;
+    transition:opacity var(--transition-time) ease;
+  }
+  .card::before{
+    left:-6%;
+    top:-6%;
+    background: radial-gradient(circle at 30% 30%, #ffd6e8, transparent 35%), radial-gradient(circle at 70% 70%, #ffefe9, transparent 35%);
+  }
+  .card::after{
+    right:-8%;
+    bottom:-8%;
+    background: radial-gradient(circle at 20% 20%, #ffd1f0, transparent 35%), radial-gradient(circle at 60% 60%, #ffe4f2, transparent 40%);
+  }
+
+  /* Hidden "Yêu hoa" reveal state */
+  .love-state{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:18px;
+    pointer-events:none;
+    opacity:0;
+    transform:scale(0.98);
+    transition:opacity var(--transition-time) ease var(--transition-time), transform calc(var(--transition-time)) ease var(--transition-time);
+    z-index:6;
+  }
+
+  .love-state.show{
+    opacity:1;
+    transform:scale(1);
+    pointer-events:auto;
+  }
+
+  .love-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+    font-weight:800;
+    background: linear-gradient(90deg, rgba(255,255,255,0.9), rgba(255,255,255,0.6));
+    padding:12px 20px;
+    border-radius:999px;
+    font-size:clamp(20px,4vw,34px);
+    box-shadow: 0 12px 35px rgba(255,90,145,0.18);
+    color:var(--pink);
+    border:1px solid rgba(255,255,255,0.6);
+  }
+
+  .love-badge .heart {
+    display:inline-grid;
+    place-items:center;
+    width:48px;
+    height:48px;
+    border-radius:999px;
+    background: linear-gradient(180deg,#ff6b9a,#ff335e);
+    color:white;
+    font-size:20px;
+    box-shadow: 0 6px 18px rgba(255,80,120,0.25);
+    transform-origin:center;
+    animation: pulse 1200ms infinite;
+  }
+  @keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+    100%{transform:scale(1)}
+  }
+
+  /* Heart spam lane (running across) */
+  .heart-lane{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:6vh;
+    height:80px;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:9;
+  }
+  .heart-lane .heart-runner{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:20px;
+    opacity:0.95;
+    will-change:transform,opacity;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    filter: drop-shadow(0 6px 12px rgba(255,80,120,0.12));
+  }
+
+  /* animation from left outside to right outside */
+  @keyframes sweep {
+    0% { transform: translateX(-18vw) translateY(-50%) scale(0.9); opacity:0; }
+    8% { opacity:1 }
+    50% { transform: translateX(50vw) translateY(-50%) scale(1.05); opacity:1; }
+    100% { transform: translateX(120vw) translateY(-50%) scale(1.0); opacity:0; }
+  }
+
+  /* "after" body theme (pink) */
+  body.after-love{
+    background: radial-gradient(circle at 10% 20%, #fff1f6 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, #fff7fa 0%, transparent 20%),
+                linear-gradient(120deg,#ffd1e8,#ffb6d1 60%, #ffc7e6);
+    color:#3a0620;
+  }
+
+  /* Subtle footer note */
+  .note {
+    font-size:13px;
+    color: #6b2b3a;
+    opacity:0.9;
+  }
+
+  /* Responsive spacing */
+  @media (max-width:560px){
+    .card{padding:28px;border-radius:14px}
+    .apology{padding:12px 16px}
+    .love-badge{font-size:20px}
+  }
+</style>
+</head>
+<body>
+  <main class="card" aria-live="polite">
+    <section class="panel" id="introPanel">
+      <h1 class="intro-title">Xin lỗi em, Hoa.</h1>
+      <p class="intro-quote">Có những lời nói em nghe, có những phút giây anh đã làm em buồn. Anh biết lỗi — và anh muốn nói một câu thật chân thành từ trái tim.</p>
+
+      <div class="apology" id="apologyText" role="status">Hoa, anh xin lỗi. Em có thể cho anh cơ hội để sửa lỗi không?</div>
+
+      <p class="note" style="margin-top:14px">Hãy để trái tim nói thay lời — chờ một chút nhé 💌</p>
+    </section>
+
+    <!-- Love reveal (hidden until 3s) -->
+    <div class="love-state" id="loveState" aria-hidden="true">
+      <div class="love-badge" id="loveBadge">
+        <div class="heart" aria-hidden="true">❤️</div>
+        <div class="love-text">Yêu <strong>Hoa</strong></div>
+      </div>
+      <div class="note">Anh sẽ luôn cố gắng làm em cười lại — mãi mãi.</div>
+    </div>
+  </main>
+
+  <!-- Heart lane for spam hearts -->
+  <div class="heart-lane" id="heartLane" aria-hidden="true"></div>
+
+<script>
+  // After 3 seconds, reveal the love state, change background to pink, start hearts
+  const DELAY_MS = 3000;
+  const loveState = document.getElementById('loveState');
+  const body = document.body;
+  const apology = document.getElementById('apologyText');
+  const heartLane = document.getElementById('heartLane');
+
+  function startLove() {
+    // Transition UI
+    body.classList.add('after-love');
+    loveState.classList.add('show');
+    loveState.setAttribute('aria-hidden','false');
+
+    // Move apology a bit up and fade
+    apology.style.transform = 'translateY(-10px)';
+    apology.style.opacity = '0.0';
+
+    // Create many hearts that run across
+    spawnHearts(18); // number of hearts, adjust if want more
+  }
+
+  // spawn hearts with staggered delays and varied sizes/positions
+  function spawnHearts(count) {
+    const colors = ['#ff6b9a','#ff3b7a','#ff8bb2','#ffd1e0','#ff4d7a'];
+    for (let i=0;i<count;i++){
+      const el = document.createElement('div');
+      el.className = 'heart-runner';
+      // heart char or emoji
+      el.innerHTML = '💖';
+      // randomize vertical position within lane (-30% to 30%)
+      const yOffset = (Math.random()*60 - 30);
+      el.style.top = 50 + yOffset + '%';
+      // random size
+      const size = 18 + Math.round(Math.random()*30); // 18px - 48px
+      el.style.fontSize = size + 'px';
+      // color via text-shadow + filter, we keep emoji but tint via drop-shadow
+      const c = colors[Math.floor(Math.random()*colors.length)];
+      el.style.filter = 'drop-shadow(0 6px 10px ' + hexToRgba(c,0.18) + ')';
+      // animation duration varied slightly
+      const dur = 4000 + Math.round(Math.random()*2500); // 4s - 6.5s
+      el.style.animation = `sweep ${dur}ms linear forwards`;
+      // stagger: start time negative so they come continuously
+      const delay = Math.round(Math.random()*2500) - 1200;
+      el.style.left = '-20vw';
+      el.style.animationDelay = `${delay}ms`;
+
+      // slight rotation
+      el.style.transform = `translateY(-50%) rotate(${Math.round(Math.random()*40-20)}deg)`;
+
+      heartLane.appendChild(el);
+
+      // cleanup after animation ends
+      el.addEventListener('animationend', ()=> el.remove());
+      // spawn some continuous ones (spawn another one occasionally)
+      setTimeout(()=> {
+        // spawn a follow-up heart
+        if (Math.random() > 0.4) spawnSingleFollow();
+      }, Math.random()*5000 + 2000);
+    }
+  }
+
+  function spawnSingleFollow(){
+    const el = document.createElement('div');
+    el.className = 'heart-runner';
+    el.innerHTML = Math.random() > 0.5 ? '❤️' : '💗';
+    const yOffset = (Math.random()*60 - 30);
+    el.style.top = 50 + yOffset + '%';
+    const size = 14 + Math.round(Math.random()*36);
+    el.style.fontSize = size + 'px';
+    const colors = ['#ff6b9a','#ff3b7a','#ff8bb2','#ffd1e0','#ff4d7a'];
+    const c = colors[Math.floor(Math.random()*colors.length)];
+    el.style.filter = 'drop-shadow(0 6px 10px ' + hexToRgba(c,0.18) + ')';
+    const dur = 4200 + Math.round(Math.random()*3000);
+    el.style.animation = `sweep ${dur}ms linear forwards`;
+    const delay = Math.round(Math.random()*1800) - 800;
+    el.style.animationDelay = `${delay}ms`;
+    el.style.left = '-20vw';
+    el.style.transform = `translateY(-50%) rotate(${Math.round(Math.random()*80-40)}deg)`;
+
+    heartLane.appendChild(el);
+    el.addEventListener('animationend', ()=> el.remove());
+  }
+
+  // helper to produce rgba for drop-shadow
+  function hexToRgba(hex, alpha){
+    const c = hex.replace('#','');
+    const r = parseInt(c.substring(0,2),16);
+    const g = parseInt(c.substring(2,4),16);
+    const b = parseInt(c.substring(4,6),16);
+    return `rgba(${r},${g},${b},${alpha})`;
+  }
+
+  // kick off after delay
+  setTimeout(startLove, DELAY_MS);
+
+  // Accessibility: allow replay on click of the badge
+  document.getElementById('loveBadge').addEventListener('click', ()=>{
+    // clear existing hearts
+    heartLane.innerHTML='';
+    // re-run
+    startLove();
+  });
+
+  // Optional: press Esc to remove hearts (small interactive touch)
+  document.addEventListener('keydown', (e)=>{
+    if (e.key === 'Escape'){
+      heartLane.innerHTML='';
+    }
+  });
+</script>
+</body>
+</html>
